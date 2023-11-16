@@ -1,3 +1,5 @@
+{-# LANGUAGE QuasiQuotes #-}
+
 -- This file is part of the Wire Server implementation.
 --
 -- Copyright (C) 2023 Wire Swiss GmbH <opensource@wire.com>
@@ -14,7 +16,8 @@
 --
 -- You should have received a copy of the GNU Affero General Public License along
 -- with this program. If not, see <https://www.gnu.org/licenses/>.
-module Galley.Schema.V88_TruncateMLSGroupMemberClient
+
+module Brig.Schema.V81_AddFederationRemoteTeams
   ( migration,
   )
 where
@@ -23,11 +26,18 @@ import Cassandra.Schema
 import Imports
 import Text.RawString.QQ
 
--- | This migration exists because the table could have some rogue data in it
--- before MLS Draft-17 was implemented. It was not supposed to be used, but it
--- could've been. This migration just deletes old data. This could break some
--- conversations/users in unknown ways. But those are most likely test users.
 migration :: Migration
-migration = Migration 88 "Truncate mls_group_member_client" $ do
-  schema'
-    [r|TRUNCATE TABLE mls_group_member_client|]
+migration =
+  Migration 81 "Add table for managing backend wide team federation" $ do
+    schema'
+      [r|
+        CREATE TABLE federation_remote_teams
+          ( domain text
+          , team uuid
+          , PRIMARY KEY (domain, team))
+     |]
+    schema'
+      [r| ALTER TABLE federation_remotes ADD (
+            restriction int
+          )
+     |]

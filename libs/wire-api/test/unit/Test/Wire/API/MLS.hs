@@ -123,7 +123,7 @@ testParseApplication = do
   msgData <- withSystemTempDirectory "mls" $ \tmp -> do
     void $ spawn (cli qcid tmp ["init", qcid]) Nothing
     groupJSON <- spawn (cli qcid tmp ["group", "create", "Zm9v"]) Nothing
-    spawn (cli qcid tmp ["message", "--group", "-", "hello"]) (Just groupJSON)
+    spawn (cli qcid tmp ["message", "--group-in", "-", "hello"]) (Just groupJSON)
 
   msg <- case decodeMLS' @Message msgData of
     Left err -> assertFailure (T.unpack err)
@@ -204,13 +204,13 @@ testKeyPackageRef = do
 testRemoveProposalMessageSignature :: IO ()
 testRemoveProposalMessageSignature = withSystemTempDirectory "mls" $ \tmp -> do
   qcid <- do
-    let c = newClientId 0x3ae58155
+    let c = ClientId 0x3ae58155
     usr <- flip Qualified (Domain "example.com") <$> (Id <$> UUID.nextRandom)
     pure (userClientQid usr c)
   void $ spawn (cli qcid tmp ["init", qcid]) Nothing
 
   qcid2 <- do
-    let c = newClientId 0x4ae58157
+    let c = ClientId 0x4ae58157
     usr <- flip Qualified (Domain "example.com") <$> (Id <$> UUID.nextRandom)
     pure (userClientQid usr c)
   void $ spawn (cli qcid2 tmp ["init", qcid2]) Nothing
@@ -282,7 +282,7 @@ userClientQid :: Qualified UserId -> ClientId -> String
 userClientQid usr c =
   show (qUnqualified usr)
     <> ":"
-    <> T.unpack c.client
+    <> T.unpack (clientToText c)
     <> "@"
     <> T.unpack (domainText (qDomain usr))
 
@@ -301,7 +301,7 @@ spawn cp minput = do
        in snd <$> concurrently writeInput readOutput
   case (mout, ex) of
     (Just out, ExitSuccess) -> pure out
-    _ -> assertFailure "Failed spawning process"
+    _ -> assertFailure $ "Failed spawning process\n" <> show mout <> "\n" <> show ex
 
 cli :: String -> FilePath -> [String] -> CreateProcess
 cli store tmp args =
@@ -311,5 +311,5 @@ cli store tmp args =
 randomIdentity :: IO ClientIdentity
 randomIdentity = do
   uid <- Id <$> UUID.nextRandom
-  c <- newClientId <$> randomIO
+  c <- ClientId <$> randomIO
   pure $ ClientIdentity (Domain "mls.example.com") uid c

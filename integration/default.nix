@@ -17,9 +17,10 @@
 , containers
 , cql
 , cql-io
-, cryptonite
+, crypton
 , data-default
 , data-timeout
+, deriving-aeson
 , directory
 , errors
 , exceptions
@@ -89,9 +90,10 @@ mkDerivation {
     containers
     cql
     cql-io
-    cryptonite
+    crypton
     data-default
     data-timeout
+    deriving-aeson
     directory
     errors
     exceptions

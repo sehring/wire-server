@@ -18,7 +18,7 @@
 , conduit
 , conduit-extra
 , containers
-, cryptonite
+, crypton
 , data-default
 , errors
 , exceptions
@@ -45,6 +45,7 @@
 , optparse-applicative
 , resourcet
 , retry
+, safe
 , servant
 , servant-client
 , servant-server
@@ -55,6 +56,7 @@
 , text
 , time
 , tinylog
+, transformers
 , transitive-anns
 , types-common
 , types-common-aws
@@ -91,7 +93,7 @@ mkDerivation {
     conduit
     conduit-extra
     containers
-    cryptonite
+    crypton
     data-default
     errors
     exceptions
@@ -110,10 +112,12 @@ mkDerivation {
     resourcet
     retry
     servant
+    servant-client
     servant-server
     text
     time
     tinylog
+    transformers
     transitive-anns
     types-common
     types-common-aws
@@ -137,7 +141,7 @@ mkDerivation {
     cargohold-types
     conduit
     containers
-    cryptonite
+    crypton
     federator
     HsOpenSSL
     http-api-data
@@ -152,6 +156,7 @@ mkDerivation {
     mmorph
     mtl
     optparse-applicative
+    safe
     servant-client
     tagged
     tasty
